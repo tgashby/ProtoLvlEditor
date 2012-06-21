@@ -1,0 +1,7 @@
+*.sln
+*.suo
+*.contentproj
+*/bin/
+*/obj/
+*.csproj*
+ContentLib/
