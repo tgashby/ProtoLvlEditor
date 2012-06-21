@@ -150,9 +150,15 @@ namespace Proto_LvlEditor
                 }
             }
         }
+
         public void clearTiles()
         {
            tiles = new List<Tile>();
+        }
+
+        public List<Tile> getTiles()
+        {
+           return tiles;
         }
     }
 }

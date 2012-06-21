@@ -6,21 +6,20 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using System.Xml;
+using System.Xml.Linq;
 using System.IO;
+using Microsoft.Xna.Framework;
+using System.Text.RegularExpressions;
 
 namespace Proto_LvlEditor
 {
    public partial class Editor : Form
    {
-      XmlDocument xmlDoc;
-
       Tile currTile;
 
       public Editor()
       {
          InitializeComponent();
-         xmlDoc = new XmlDocument();
 
          // Add in the XNA context
          this.xnaContext = new XNAContext();
@@ -66,7 +65,7 @@ namespace Proto_LvlEditor
          Stream myStream = null;
          OpenFileDialog openFileDialog1 = new OpenFileDialog();
 
-         openFileDialog1.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
+         openFileDialog1.Filter = "map files (*.mp)|*.mp";
          openFileDialog1.FilterIndex = 2;
          openFileDialog1.RestoreDirectory = true;
 
@@ -78,7 +77,10 @@ namespace Proto_LvlEditor
                {
                   using (myStream)
                   {
-                     // Insert code to read the stream here.
+                     StreamReader sr = new StreamReader(myStream);
+
+                     XElement xml = XElement.Parse(sr.ReadToEnd());
+                     loadMap(xml);
                   }
                }
             }
@@ -94,7 +96,7 @@ namespace Proto_LvlEditor
          Stream myStream;
          SaveFileDialog saveFileDialog1 = new SaveFileDialog();
 
-         saveFileDialog1.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
+         saveFileDialog1.Filter = "map files (*.mp)|*.mp";
          saveFileDialog1.FilterIndex = 2;
          saveFileDialog1.RestoreDirectory = true;
 
@@ -102,15 +104,51 @@ namespace Proto_LvlEditor
          {
             if ((myStream = saveFileDialog1.OpenFile()) != null)
             {
-               // Code to write the stream goes here.
+               byte[] bytes = saveMap();
+               myStream.Write(bytes, 0, bytes.Length);
                myStream.Close();
             }
          }
       }
 
+      private byte[] saveMap()
+      {
+         XElement map = new XElement("map",
+            from Tile t in xnaContext.getTiles()
+            select new XElement("tile",
+               new XAttribute("type", t.type),
+               new XAttribute("loc", t.pos)));
+
+         return Encoding.ASCII.GetBytes(map.ToString());
+      }
+
       private void clearToolStripMenuItem_Click(object sender, EventArgs e)
       {
          xnaContext.clearTiles();
+      }
+
+      private void loadMap(XElement xml)
+      {
+         xnaContext.clearTiles();
+         Tile t;
+
+         foreach (XElement tile in xml.Elements("tile"))
+         {
+            t = xnaContext.addTile(tile.Attribute("type").Value);
+            t.pos = parseVector2(tile.Attribute("loc").Value);
+         }
+      }
+
+      private Vector2 parseVector2(string p)
+      {
+         Vector2 vec;
+
+         string[] s = Regex.Split(p, @"\D+");
+
+         vec.X = float.Parse(s[1]);
+         vec.Y = float.Parse(s[2]);
+
+         return vec;
       }
    }
 }
