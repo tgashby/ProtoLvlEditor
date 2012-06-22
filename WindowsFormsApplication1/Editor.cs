@@ -33,6 +33,26 @@ namespace Proto_LvlEditor
          this.xnaContext.Text = "xnaContext";
          this.xnaContext.MouseMove += new MouseEventHandler(xnaContext_MouseMove);
          this.xnaContext.Click += new EventHandler(xnaContext_Click);
+         this.xnaContext.KeyDown += new KeyEventHandler(xnaContext_KeyDown);
+      }
+
+      void xnaContext_KeyDown(object sender, KeyEventArgs e)
+      {
+          Console.WriteLine("KeyDown: " +  e.KeyValue);
+          if (e.Shift && currTile != null)
+          {
+              Console.WriteLine("duplicating tiles!");
+              duplicateTile();
+          }
+      }
+
+      private void duplicateTile()
+      {
+          if (getTileAtMouse() != null)
+          {
+              xnaContext.placeTile(currTile);
+              currTile = xnaContext.addTile(currTile.type);
+          }
       }
 
       private void smileyButton_Click(object sender, EventArgs e)
