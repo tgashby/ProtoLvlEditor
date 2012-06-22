@@ -36,14 +36,23 @@ namespace Proto_LvlEditor
          this.xnaContext.KeyDown += new KeyEventHandler(xnaContext_KeyDown);
       }
 
-      void xnaContext_KeyDown(object sender, KeyEventArgs e)
+      private void xnaContext_KeyDown(object sender, KeyEventArgs e)
       {
-          Console.WriteLine("KeyDown: " +  e.KeyValue);
-          if (e.Shift && currTile != null)
-          {
-              Console.WriteLine("duplicating tiles!");
-              duplicateTile();
-          }
+         if (e.Shift && currTile != null)
+         {
+            duplicateTile();
+         }
+      }
+
+      public static Control FindFocusedControl(Control control)
+      {
+         ContainerControl container = control as ContainerControl;
+         while (container != null)
+         {
+            control = container.ActiveControl;
+            container = control as ContainerControl;
+         }
+         return control;
       }
 
       private void duplicateTile()
@@ -58,12 +67,18 @@ namespace Proto_LvlEditor
       private void smileyButton_Click(object sender, EventArgs e)
       {
          currTile = xnaContext.addTile("smiley");
+
+         // Set XNA context to focus so that duplication works
+         this.xnaContext.Focus();
       }
 
       private void frownyButton_Click(object sender, EventArgs e)
       {
          currTile = xnaContext.addTile("frowny");
          // xnaContext.undo();
+
+         // Set XNA context to focus so that duplication works
+         this.xnaContext.Focus();
       }
 
       private void xnaContext_Click(object sender, System.EventArgs e)
@@ -77,6 +92,8 @@ namespace Proto_LvlEditor
               xnaContext.placeTile(currTile);
               currTile = null;
           }
+
+          this.xnaContext.Focus();
       }
 
       private Tile getTileAtMouse()
