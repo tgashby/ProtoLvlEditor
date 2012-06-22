@@ -16,6 +16,7 @@ namespace Proto_LvlEditor
    public partial class Editor : Form
    {
       Tile currTile;
+      int mouseX, mouseY;
 
       public Editor()
       {
@@ -47,8 +48,32 @@ namespace Proto_LvlEditor
 
       private void xnaContext_Click(object sender, System.EventArgs e)
       {
+          if (currTile == null)
+          {
+              currTile = getTileAtMouse();
+          }
+          else
+          {
               xnaContext.placeTile(currTile);
               currTile = null;
+          }
+      }
+
+      private Tile getTileAtMouse()
+      {
+          int x = mouseX;
+          int y = mouseY;
+
+          foreach (Tile t in xnaContext.getTiles())
+          {
+              if (x > t.pos.X && x < t.pos.X + t.image.Width &&
+                  y > t.pos.Y && y < t.pos.Y + t.image.Height)
+              {
+                  return t;
+              }
+          }
+
+          return null;
       }
 
       private void xnaContext_MouseMove(object sender, System.Windows.Forms.MouseEventArgs e)
@@ -58,6 +83,9 @@ namespace Proto_LvlEditor
             currTile.pos.X = e.X - (e.X % currTile.image.Width);
             currTile.pos.Y = e.Y - (e.Y % currTile.image.Height);
          }
+
+         mouseX = e.X;
+         mouseY = e.Y;
       }
 
       private void loadToolStripMenuItem_Click(object sender, EventArgs e)
