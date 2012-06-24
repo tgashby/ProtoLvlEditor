@@ -34,10 +34,23 @@ namespace Proto_LvlEditor
          this.xnaContext.MouseMove += new MouseEventHandler(xnaContext_MouseMove);
          this.xnaContext.Click += new EventHandler(xnaContext_Click);
          this.xnaContext.KeyDown += new KeyEventHandler(xnaContext_KeyDown);
+         this.xnaContext.KeyUp += new KeyEventHandler(xnaContext_KeyUp);
+      }
+
+      void xnaContext_KeyUp(object sender, KeyEventArgs e)
+      {
+         int DELETE_KEY = 46;
+
+         if (e.KeyValue == DELETE_KEY)
+         {
+            xnaContext.removeTile(currTile);
+            currTile = null;
+         }
       }
 
       private void xnaContext_KeyDown(object sender, KeyEventArgs e)
       {
+         Console.WriteLine(e.KeyValue);
          if (e.Shift && currTile != null)
          {
             duplicateTile();

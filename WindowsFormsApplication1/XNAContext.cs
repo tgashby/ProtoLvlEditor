@@ -160,5 +160,17 @@ namespace Proto_LvlEditor
         {
            return tiles;
         }
+
+        public void removeTile(Tile currTile)
+        {
+           foreach (Tile t in tiles)
+           {
+              if (t.Equals(currTile))
+              {
+                 tiles.Remove(currTile);
+                 break;
+              }
+           }
+        }
     }
 }
