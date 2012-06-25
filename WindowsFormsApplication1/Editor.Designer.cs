@@ -30,6 +30,7 @@
       {
          System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Editor));
          this.controlsPanel = new System.Windows.Forms.Panel();
+         this.tileSelection = new System.Windows.Forms.ListBox();
          this.frownyButton = new System.Windows.Forms.Button();
          this.smileyButton = new System.Windows.Forms.Button();
          this.splitContainer1 = new System.Windows.Forms.SplitContainer();
@@ -46,6 +47,7 @@
          // 
          // controlsPanel
          // 
+         this.controlsPanel.Controls.Add(this.tileSelection);
          this.controlsPanel.Controls.Add(this.frownyButton);
          this.controlsPanel.Controls.Add(this.smileyButton);
          this.controlsPanel.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -53,6 +55,18 @@
          this.controlsPanel.Name = "controlsPanel";
          this.controlsPanel.Size = new System.Drawing.Size(209, 962);
          this.controlsPanel.TabIndex = 0;
+         // 
+         // tileSelection
+         // 
+         this.tileSelection.FormattingEnabled = true;
+         this.tileSelection.Items.AddRange(new object[] {
+            "Smiley",
+            "Frowny"});
+         this.tileSelection.Location = new System.Drawing.Point(3, 114);
+         this.tileSelection.Name = "tileSelection";
+         this.tileSelection.Size = new System.Drawing.Size(203, 43);
+         this.tileSelection.TabIndex = 2;
+         this.tileSelection.SelectedIndexChanged += new System.EventHandler(this.tileSelector_SelectedIndexChanged);
          // 
          // frownyButton
          // 
@@ -154,6 +168,7 @@
       private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
       private System.Windows.Forms.ToolStripMenuItem loadToolStripMenuItem;
       private System.Windows.Forms.ToolStripMenuItem clearToolStripMenuItem;
+      private System.Windows.Forms.ListBox tileSelection;
    }
 }
 

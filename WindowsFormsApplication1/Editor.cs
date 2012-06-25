@@ -228,5 +228,12 @@ namespace Proto_LvlEditor
 
          return vec;
       }
+
+      private void tileSelector_SelectedIndexChanged(object sender, EventArgs e)
+      {
+         String selected = (String)this.tileSelection.SelectedItem;
+
+         currTile = this.xnaContext.addTile(selected.ToLower());
+      }
    }
 }
