@@ -10,17 +10,25 @@ using System.Xml.Linq;
 using System.IO;
 using Microsoft.Xna.Framework;
 using System.Text.RegularExpressions;
+using System.Collections;
 
 namespace Proto_LvlEditor
 {
    public partial class Editor : Form
    {
       Tile currTile;
+      ArrayList tileTypes;
       int mouseX, mouseY;
 
       public Editor()
       {
+         tileTypes = new ArrayList();
+         tileTypes.Add(new TileTypes("Smiley", "smiley"));
+         tileTypes.Add(new TileTypes("Frowney", "frowny"));
+
          InitializeComponent();
+
+         this.tileSelection.SelectedIndex = -1;
 
          // Add in the XNA context
          this.xnaContext = new XNAContext();
@@ -231,9 +239,21 @@ namespace Proto_LvlEditor
 
       private void tileSelector_SelectedIndexChanged(object sender, EventArgs e)
       {
-         String selected = (String)this.tileSelection.SelectedItem;
+         if (this.tileSelection.SelectedIndex != -1)
+         {
+            String selected = ((TileTypes)this.tileSelection.SelectedItem).FileName;
 
-         currTile = this.xnaContext.addTile(selected.ToLower());
+            currTile = this.xnaContext.addTile(selected);
+         }
+      }
+
+      private void initTiles(object sender, EventArgs e)
+      {
+         this.tileSelection.DataSource = tileTypes;
+         this.tileSelection.DisplayMember = "DisplayName";
+         this.tileSelection.ValueMember = "FileName";
+
+         this.tileSelection.SelectedIndexChanged += new EventHandler(tileSelector_SelectedIndexChanged);
       }
    }
 }
