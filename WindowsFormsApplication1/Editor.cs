@@ -19,6 +19,7 @@ namespace Proto_LvlEditor
       Tile currTile;
       ArrayList tileTypes;
       int mouseX, mouseY;
+      System.Drawing.Size dragLoc;
       bool contextDrag = false;
 
       public Editor()
@@ -56,6 +57,8 @@ namespace Proto_LvlEditor
       void xnaContext_MouseDown(object sender, MouseEventArgs e)
       {
          contextDrag = true;
+
+         dragLoc = new System.Drawing.Size(e.Location);
       }
 
       void xnaContext_KeyUp(object sender, KeyEventArgs e)
@@ -157,12 +160,10 @@ namespace Proto_LvlEditor
 
          if (contextDrag && currTile == null)
          {
-            this.xnaContext.Left -= (mouseX - e.X);
-            this.xnaContext.Top -= (mouseY - e.Y);
+            System.Drawing.Point dragOffset = e.Location - dragLoc;
+            this.xnaContext.Left += dragOffset.X;
+            this.xnaContext.Top += dragOffset.Y;
          }
-
-         Console.WriteLine(mouseX - e.X);
-         Console.WriteLine(mouseY - e.Y);
 
          mouseX = e.X;
          mouseY = e.Y;
