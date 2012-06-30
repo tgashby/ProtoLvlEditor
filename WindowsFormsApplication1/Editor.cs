@@ -19,6 +19,7 @@ namespace Proto_LvlEditor
       Tile currTile;
       ArrayList tileTypes;
       int mouseX, mouseY;
+      bool contextDrag = false;
 
       public Editor()
       {
@@ -33,16 +34,28 @@ namespace Proto_LvlEditor
          // Add in the XNA context
          this.xnaContext = new XNAContext();
          this.splitContainer1.Panel1.Controls.Add(this.xnaContext);
-         this.xnaContext.Dock = System.Windows.Forms.DockStyle.Fill;
+         this.xnaContext.Dock = System.Windows.Forms.DockStyle.None;
          this.xnaContext.Location = new System.Drawing.Point(0, 0);
          this.xnaContext.Name = "xnaContext";
-         this.xnaContext.Size = new System.Drawing.Size(795, 962);
+         this.xnaContext.Size = new System.Drawing.Size(2000, 1000);
          this.xnaContext.TabIndex = 0;
          this.xnaContext.Text = "xnaContext";
+         this.xnaContext.MouseDown += new MouseEventHandler(xnaContext_MouseDown);
          this.xnaContext.MouseMove += new MouseEventHandler(xnaContext_MouseMove);
+         this.xnaContext.MouseUp += new MouseEventHandler(xnaContext_MouseUp);
          this.xnaContext.Click += new EventHandler(xnaContext_Click);
          this.xnaContext.KeyDown += new KeyEventHandler(xnaContext_KeyDown);
          this.xnaContext.KeyUp += new KeyEventHandler(xnaContext_KeyUp);
+      }
+
+      void xnaContext_MouseUp(object sender, MouseEventArgs e)
+      {
+         contextDrag = false;
+      }
+
+      void xnaContext_MouseDown(object sender, MouseEventArgs e)
+      {
+         contextDrag = true;
       }
 
       void xnaContext_KeyUp(object sender, KeyEventArgs e)
@@ -78,11 +91,11 @@ namespace Proto_LvlEditor
 
       private void duplicateTile()
       {
-          if (getTileAtMouse() != null)
-          {
-              xnaContext.placeTile(currTile);
-              currTile = xnaContext.addTile(currTile.type);
-          }
+         if (getTileAtMouse() != null)
+         {
+            xnaContext.placeTile(currTile);
+            currTile = xnaContext.addTile(currTile.type);
+         }
       }
 
       private void smileyButton_Click(object sender, EventArgs e)
@@ -104,34 +117,34 @@ namespace Proto_LvlEditor
 
       private void xnaContext_Click(object sender, System.EventArgs e)
       {
-          if (currTile == null)
-          {
-              currTile = getTileAtMouse();
-          }
-          else
-          {
-              xnaContext.placeTile(currTile);
-              currTile = null;
-          }
+         if (currTile == null)
+         {
+            currTile = getTileAtMouse();
+         }
+         else
+         {
+            xnaContext.placeTile(currTile);
+            currTile = null;
+         }
 
-          this.xnaContext.Focus();
+         this.xnaContext.Focus();
       }
 
       private Tile getTileAtMouse()
       {
-          int x = mouseX;
-          int y = mouseY;
+         int x = mouseX;
+         int y = mouseY;
 
-          foreach (Tile t in xnaContext.getTiles())
-          {
-              if (x > t.pos.X && x < t.pos.X + t.image.Width &&
-                  y > t.pos.Y && y < t.pos.Y + t.image.Height)
-              {
-                  return t;
-              }
-          }
+         foreach (Tile t in xnaContext.getTiles())
+         {
+            if (x > t.pos.X && x < t.pos.X + t.image.Width &&
+                y > t.pos.Y && y < t.pos.Y + t.image.Height)
+            {
+               return t;
+            }
+         }
 
-          return null;
+         return null;
       }
 
       private void xnaContext_MouseMove(object sender, System.Windows.Forms.MouseEventArgs e)
@@ -141,6 +154,15 @@ namespace Proto_LvlEditor
             currTile.pos.X = e.X - (e.X % currTile.image.Width);
             currTile.pos.Y = e.Y - (e.Y % currTile.image.Height);
          }
+
+         if (contextDrag && currTile == null)
+         {
+            this.xnaContext.Left -= (mouseX - e.X);
+            this.xnaContext.Top -= (mouseY - e.Y);
+         }
+
+         Console.WriteLine(mouseX - e.X);
+         Console.WriteLine(mouseY - e.Y);
 
          mouseX = e.X;
          mouseY = e.Y;
